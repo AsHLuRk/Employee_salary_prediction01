@@ -1,60 +1,75 @@
-from flask import Flask, request, render_template, jsonify
-import joblib
+import streamlit as st
 import pandas as pd
+import joblib
 
-app = Flask(__name__)
+# Load model
+model = joblib.load('salary_prediction_model.joblib')
 
-# Load the trained model
-try:
-    model = joblib.load('salary_prediction_model.joblib')
-    print("✅ Model loaded successfully.")
-except FileNotFoundError:
-    print("❌ Model file not found. Please train the model first using main.py.")
-    model = None
+st.set_page_config(page_title="Salary Prediction", layout="centered")
+st.title("💼 Employee Salary Prediction")
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+# Inputs
+age = st.slider("Age", 18, 65, 30)
+fnlwgt = st.number_input("FNLWGT", 10000, 1000000, 200000)
+education_num = st.slider("Educational Number", 1, 16, 10)
+capital_gain = st.number_input("Capital Gain", 0, 100000, 0)
+capital_loss = st.number_input("Capital Loss", 0, 5000, 0)
+hours_per_week = st.slider("Hours per Week", 1, 100, 40)
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    if model is None:
-        return jsonify({'error': 'Model not loaded'}), 500
+# Dropdowns
+workclass = st.selectbox("Workclass", [
+    'Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov',
+    'Local-gov', 'State-gov', 'Without-pay', 'Never-worked'
+])
 
-    try:
-        # Collect form inputs and convert to proper types
-        input_data = {
-            'age': [int(request.form['age'])],
-            'workclass': [request.form['workclass']],
-            'fnlwgt': [int(request.form['fnlwgt'])],
-            'education': [request.form['education']],
-            'educational_num': [int(request.form['educational_num'])],
-            'marital_status': [request.form['marital_status']],
-            'occupation': [request.form['occupation']],
-            'relationship': [request.form['relationship']],
-            'race': [request.form['race']],
-            'gender': [request.form['gender']],
-            'capital_gain': [int(request.form['capital_gain'])],
-            'capital_loss': [int(request.form['capital_loss'])],
-            'hours_per_week': [int(request.form['hours_per_week'])],
-            'native_country': [request.form['native_country']]
-        }
+education = st.selectbox("Education", [
+    'Bachelors', 'Some-college', 'HS-grad', 'Masters', 'Assoc-acdm',
+    'Assoc-voc', 'Doctorate', 'Prof-school', 'Other'
+])
 
-        # Create DataFrame for prediction
-        input_df = pd.DataFrame(input_data)
-        print("\n🧾 Input DataFrame:")
-        print(input_df)
+marital_status = st.selectbox("Marital Status", [
+    'Married-civ-spouse', 'Never-married', 'Divorced', 'Separated', 'Widowed'
+])
 
-        # Make prediction
-        prediction = model.predict(input_df)
-        print(f"🔮 Prediction result: {prediction}")
+occupation = st.selectbox("Occupation", [
+    'Tech-support', 'Craft-repair', 'Other-service', 'Sales', 'Exec-managerial',
+    'Prof-specialty', 'Handlers-cleaners', 'Machine-op-inspct', 'Adm-clerical',
+    'Farming-fishing', 'Transport-moving', 'Protective-serv'
+])
 
-        result = 'Income > 50K' if prediction[0] == 1 else 'Income <= 50K'
-        return jsonify({'salary_prediction': result})
+relationship = st.selectbox("Relationship", [
+    'Husband', 'Not-in-family', 'Own-child', 'Unmarried', 'Wife'
+])
 
-    except Exception as e:
-        print(f"❌ Error: {e}")
-        return jsonify({'error': f'An error occurred: {str(e)}'}), 400
+race = st.selectbox("Race", [
+    'White', 'Black', 'Asian-Pac-Islander', 'Amer-Indian-Eskimo', 'Other'
+])
 
-if __name__ == '__main__':
-    app.run(debug=True)
+gender = st.selectbox("Gender", ['Male', 'Female'])
+
+native_country = st.selectbox("Native Country", [
+    'United-States', 'India', 'Mexico', 'Philippines', 'Germany', 'Canada', 'Other'
+])
+
+# Predict
+if st.button("🔮 Predict Salary"):
+    input_df = pd.DataFrame({
+        'age': [age],
+        'workclass': [workclass],
+        'fnlwgt': [fnlwgt],
+        'education': [education],
+        'educational_num': [education_num],
+        'marital_status': [marital_status],
+        'occupation': [occupation],
+        'relationship': [relationship],
+        'race': [race],
+        'gender': [gender],
+        'capital_gain': [capital_gain],
+        'capital_loss': [capital_loss],
+        'hours_per_week': [hours_per_week],
+        'native_country': [native_country]
+    })
+
+    prediction = model.predict(input_df)[0]
+    result = "Income > 50K" if prediction == 1 else "Income ≤ 50K"
+    st.success(f"✅ Prediction: {result}")
