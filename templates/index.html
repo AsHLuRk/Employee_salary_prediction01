@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Salary Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 0 24 24" width="40">
+                    <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 1.74.56 3.34 1.5 4.65L12 22l5.5-8.35C18.44 12.34 19 10.74 19 9c0-3.87-3.13-7-7-7z"/>
+                </svg>
+                <h1>Salary Prediction</h1>
+            </div>
+            <p class="subtitle">Estimate whether income is >50K or ≤50K</p>
+        </div>
+
+        <form id="prediction-form" method="POST">
+            <div class="form-grid">
+                <!-- Range sliders with live values -->
+                <div class="form-group">
+                    <label for="age">Age: <span id="age-value">30</span></label>
+                    <input type="range" name="age" id="age" min="17" max="90" value="30" oninput="document.getElementById('age-value').textContent = this.value">
+                </div>
+
+                <div class="form-group">
+                    <label for="fnlwgt">FNLWGT: <span id="fnlwgt-value">100000</span></label>
+                    <input type="range" name="fnlwgt" id="fnlwgt" min="12000" max="1500000" value="100000" step="1000" oninput="document.getElementById('fnlwgt-value').textContent = this.value">
+                </div>
+
+                <div class="form-group">
+                    <label for="educational_num">Education Num: <span id="educational_num-value">10</span></label>
+                    <input type="range" name="educational_num" id="educational_num" min="1" max="16" value="10" oninput="document.getElementById('educational_num-value').textContent = this.value">
+                </div>
+
+                <div class="form-group">
+                    <label for="capital_gain">Capital Gain: <span id="capital_gain-value">0</span></label>
+                    <input type="range" name="capital_gain" id="capital_gain" min="0" max="99999" value="0" step="500" oninput="document.getElementById('capital_gain-value').textContent = this.value">
+                </div>
+
+                <div class="form-group">
+                    <label for="capital_loss">Capital Loss: <span id="capital_loss-value">0</span></label>
+                    <input type="range" name="capital_loss" id="capital_loss" min="0" max="4356" value="0" step="100" oninput="document.getElementById('capital_loss-value').textContent = this.value">
+                </div>
+
+                <div class="form-group">
+                    <label for="hours_per_week">Hours per Week: <span id="hours_per_week-value">40</span></label>
+                    <input type="range" name="hours_per_week" id="hours_per_week" min="1" max="99" value="40" oninput="document.getElementById('hours_per_week-value').textContent = this.value">
+                </div>
+
+                <!-- Dropdowns for categorical fields -->
+                <div class="form-group">
+                    <label for="workclass">Workclass</label>
+                    <select name="workclass" id="workclass" required>
+                        <option value="">--Select--</option>
+                        <option value="Private">Private</option>
+                        <option value="Self-emp-not-inc">Self-emp-not-inc</option>
+                        <option value="Self-emp-inc">Self-emp-inc</option>
+                        <option value="Federal-gov">Federal-gov</option>
+                        <option value="Local-gov">Local-gov</option>
+                        <option value="State-gov">State-gov</option>
+                        <option value="Without-pay">Without-pay</option>
+                        <option value="Never-worked">Never-worked</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="education">Education</label>
+                    <select name="education" id="education" required>
+                        <option value="">--Select--</option>
+                        <option value="Bachelors">Bachelors</option>
+                        <option value="HS-grad">HS-grad</option>
+                        <option value="11th">11th</option>
+                        <option value="Masters">Masters</option>
+                        <option value="9th">9th</option>
+                        <option value="Some-college">Some-college</option>
+                        <option value="Assoc-acdm">Assoc-acdm</option>
+                        <option value="Assoc-voc">Assoc-voc</option>
+                        <option value="Doctorate">Doctorate</option>
+                        <option value="5th-6th">5th-6th</option>
+                        <option value="1st-4th">1st-4th</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="marital_status">Marital Status</label>
+                    <select name="marital_status" id="marital_status" required>
+                        <option value="">--Select--</option>
+                        <option value="Married-civ-spouse">Married-civ-spouse</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Never-married">Never-married</option>
+                        <option value="Separated">Separated</option>
+                        <option value="Widowed">Widowed</option>
+                        <option value="Married-spouse-absent">Married-spouse-absent</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="occupation">Occupation</label>
+                    <select name="occupation" id="occupation" required>
+                        <option value="">--Select--</option>
+                        <option value="Tech-support">Tech-support</option>
+                        <option value="Craft-repair">Craft-repair</option>
+                        <option value="Other-service">Other-service</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Exec-managerial">Exec-managerial</option>
+                        <option value="Prof-specialty">Prof-specialty</option>
+                        <option value="Handlers-cleaners">Handlers-cleaners</option>
+                        <option value="Machine-op-inspct">Machine-op-inspct</option>
+                        <option value="Adm-clerical">Adm-clerical</option>
+                        <option value="Farming-fishing">Farming-fishing</option>
+                        <option value="Transport-moving">Transport-moving</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="relationship">Relationship</label>
+                    <select name="relationship" id="relationship" required>
+                        <option value="">--Select--</option>
+                        <option value="Wife">Wife</option>
+                        <option value="Own-child">Own-child</option>
+                        <option value="Husband">Husband</option>
+                        <option value="Not-in-family">Not-in-family</option>
+                        <option value="Other-relative">Other-relative</option>
+                        <option value="Unmarried">Unmarried</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="race">Race</label>
+                    <select name="race" id="race" required>
+                        <option value="">--Select--</option>
+                        <option value="White">White</option>
+                        <option value="Black">Black</option>
+                        <option value="Asian-Pac-Islander">Asian-Pac-Islander</option>
+                        <option value="Amer-Indian-Eskimo">Amer-Indian-Eskimo</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select name="gender" id="gender" required>
+                        <option value="">--Select--</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="native_country">Native Country</label>
+                    <select name="native_country" id="native_country" required>
+                        <option value="">--Select--</option>
+                        <option value="United-States">United-States</option>
+                        <option value="India">India</option>
+                        <option value="Mexico">Mexico</option>
+                        <option value="Philippines">Philippines</option>
+                        <option value="Germany">Germany</option>
+                        <option value="Canada">Canada</option>
+                        <option value="China">China</option>
+                        <option value="Cuba">Cuba</option>
+                        <option value="England">England</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="predict-button">
+                <span id="button-text">Predict</span>
+                <span id="loader" class="loader" style="display: none;"></span>
+            </button>
+        </form>
+
+        <div id="result-container" class="result-container" style="display: none;">
+            <h2>Prediction:</h2>
+            <p id="salary-result" class="salary-result-text">...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
