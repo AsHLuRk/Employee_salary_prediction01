@@ -5,15 +5,28 @@ import joblib
 # Load trained model
 model = joblib.load("salary_prediction_model.joblib")
 
-# Set Streamlit page config
-st.set_page_config(page_title="Salary Predictor", layout="wide")
+# Set page config
+st.set_page_config(page_title="Employee Salary Predictor", layout="wide")
 
-# --- 🎨 Custom CSS for modern glowing UI ---
+# --- 🎨 Animated Background & Custom CSS ---
 st.markdown("""
     <style>
     body {
-        background-color: #0d1117;
+        background: radial-gradient(ellipse at bottom, #0d1a2b 0%, #000000 100%);
         color: white;
+        overflow-x: hidden;
+    }
+    .background-animation {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: repeating-radial-gradient(circle at center, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 1px, transparent 1px, transparent 100px);
+      animation: moveBackground 60s linear infinite;
+      z-index: -1;
+    }
+    @keyframes moveBackground {
+      from { background-position: 0 0; }
+      to { background-position: 1000px 1000px; }
     }
     .hero {
         text-align: center;
@@ -23,7 +36,7 @@ st.markdown("""
     .hero-title {
         font-size: 3.5em;
         font-weight: 900;
-        background: linear-gradient(45deg, #8e2de2, #4a00e0);
+        background: linear-gradient(45deg, #00c6ff, #0072ff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -33,32 +46,19 @@ st.markdown("""
         margin-top: 10px;
         margin-bottom: 30px;
     }
-    .button-glow {
-        background-color: #4f46e5;
-        color: white;
-        padding: 12px 26px;
-        font-size: 1.1em;
-        border-radius: 8px;
-        border: none;
-        box-shadow: 0 0 15px #4f46e5;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    .button-glow:hover {
-        box-shadow: 0 0 25px #4f46e5;
-    }
     </style>
+    <div class="background-animation"></div>
 """, unsafe_allow_html=True)
 
-# --- 💫 HERO SECTION ---
+# --- 💼 Hero Header ---
 st.markdown("""
 <div class="hero">
-    <div class="hero-title">Your Code</div>
-    <div class="hero-subtitle">Gemini AI + Blockchain verified salary prediction</div>
+    <div class="hero-title">Employee Salary Predictor</div>
+    <div class="hero-subtitle">AI-powered prediction + tax estimation with modern UI</div>
 </div>
 """, unsafe_allow_html=True)
 
-# --- 📄 INPUT FORM ---
+# --- 📄 Input Form ---
 st.subheader("📋 Enter Employee Details")
 
 with st.form("salary_form"):
@@ -72,7 +72,7 @@ with st.form("salary_form"):
     with col2:
         workclass = st.selectbox("Workclass", ['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov', 'State-gov', 'Without-pay'])
         education = st.selectbox("Education", ['Bachelors', 'HS-grad', '11th', 'Masters', '9th', 'Some-college'])
-        marital_status = st.selectbox("Marital Status", ['Married-civ-spouse', 'Divorced', 'Never-married', 'Separated', 'Widowed', 'Married-spouse-absent'])
+        marital_status = st.selectbox("Marital Status", ['Married-civ-spouse', 'Divorced', 'Never-married', 'Separated', 'Widowed'])
 
     with col3:
         occupation = st.selectbox("Occupation", ['Tech-support', 'Craft-repair', 'Other-service', 'Sales', 'Exec-managerial'])
@@ -85,9 +85,9 @@ with st.form("salary_form"):
     hours_per_week = st.slider("Hours per Week", 1, 99, 40)
     native_country = st.selectbox("Native Country", ['United-States', 'India', 'Mexico', 'Philippines', 'Germany'])
 
-    submitted = st.form_submit_button("🔮 Predict", type="primary")
+    submitted = st.form_submit_button("🔮 Predict Salary", type="primary")
 
-# --- 🔮 PREDICTION LOGIC ---
+# --- 🔮 Prediction ---
 if submitted:
     input_data = pd.DataFrame({
         'age': [age],
@@ -109,18 +109,18 @@ if submitted:
     prediction = model.predict(input_data)[0]
     result = "Income > 50K" if prediction == 1 else "Income ≤ 50K"
 
-    # 💰 Tax Estimate
+    # 💰 Estimated Tax
     if prediction == 1:
-        est_salary = 70000
+        est_salary = 75000
         tax_rate = 0.20
     else:
-        est_salary = 40000
+        est_salary = 35000
         tax_rate = 0.05
     tax_amount = est_salary * tax_rate
 
-    # 📊 Display Results
+    # ✅ Display
     st.markdown("---")
     st.success(f"🎯 **Predicted Salary Category:** `{result}`")
     st.info(f"💵 Estimated Annual Salary: ₹{est_salary:,.0f}")
-    st.warning(f"🧾 Estimated Tax (at {int(tax_rate*100)}%): ₹{tax_amount:,.0f}")
+    st.warning(f"🧾 Estimated Income Tax (at {int(tax_rate * 100)}%): ₹{tax_amount:,.0f}")
     st.balloons()
