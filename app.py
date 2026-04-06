@@ -121,6 +121,6 @@ if submitted:
     # ✅ Display
     st.markdown("---")
     st.success(f"🎯 **Predicted Salary Category:** `{result}`")
-    st.info(f"💵 Estimated Annual Salary: ₹{est_salary:,.0f}")
-    st.warning(f"🧾 Estimated Income Tax (at {int(tax_rate * 100)}%): ₹{tax_amount:,.0f}")
+    
+
     st.balloons()
