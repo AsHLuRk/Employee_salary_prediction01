@@ -46,6 +46,59 @@ st.markdown("""
         margin-top: 10px;
         margin-bottom: 30px;
     }
+
+    /* ── Increase font size by 50% for all input widgets ── */
+
+    /* Slider label & value */
+    div[data-testid="stSlider"] label p {
+        font-size: 1.5rem !important;
+    }
+    div[data-testid="stSlider"] [data-testid="stTickBarMin"],
+    div[data-testid="stSlider"] [data-testid="stTickBarMax"] {
+        font-size: 1.2rem !important;
+    }
+
+    /* Number input label & value */
+    div[data-testid="stNumberInput"] label p {
+        font-size: 1.5rem !important;
+    }
+    div[data-testid="stNumberInput"] input {
+        font-size: 1.5rem !important;
+    }
+
+    /* Selectbox label & selected value */
+    div[data-testid="stSelectbox"] label p {
+        font-size: 1.5rem !important;
+    }
+    div[data-testid="stSelectbox"] div[data-baseweb="select"] span {
+        font-size: 1.5rem !important;
+    }
+
+    /* Radio label & options */
+    div[data-testid="stRadio"] label p {
+        font-size: 1.5rem !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label p {
+        font-size: 1.5rem !important;
+    }
+
+    /* Form submit button */
+    div[data-testid="stFormSubmitButton"] button {
+        font-size: 1.5rem !important;
+    }
+
+    /* Subheader */
+    .stSubheader {
+        font-size: 1.875rem !important;
+    }
+
+    /* General widget labels fallback */
+    .stSlider > label,
+    .stSelectbox > label,
+    .stNumberInput > label,
+    .stRadio > label {
+        font-size: 1.5rem !important;
+    }
     </style>
     <div class="background-animation"></div>
 """, unsafe_allow_html=True)
@@ -121,6 +174,5 @@ if submitted:
     # ✅ Display
     st.markdown("---")
     st.success(f"🎯 **Predicted Salary Category:** `{result}`")
-    
 
     st.balloons()
