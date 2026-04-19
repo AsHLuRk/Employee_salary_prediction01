@@ -9,6 +9,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, accuracy_score
+from xgboost import XGBClassifier
 import joblib
 
 # --- 1. Load Data ---
@@ -51,7 +52,15 @@ preprocessor = ColumnTransformer(
 models = {
     'Logistic Regression': LogisticRegression(max_iter=1000),
     'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
-    'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42)
+    'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42),
+    'XGBoost': XGBClassifier(
+        n_estimators=100,
+        learning_rate=0.1,
+        max_depth=5,
+        use_label_encoder=False,
+        eval_metric='logloss',
+        random_state=42
+    )
 }
 
 results = {}
